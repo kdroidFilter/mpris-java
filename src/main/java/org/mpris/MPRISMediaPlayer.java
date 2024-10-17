@@ -1,11 +1,11 @@
-package com.spotifyxp.deps.de.werwolf2303.mpris;
+package org.mpris;
 
-import com.spotifyxp.deps.de.werwolf2303.mpris.mpris.*;
 import org.freedesktop.dbus.DBusPath;
 import org.freedesktop.dbus.connections.impl.DBusConnection;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.types.Variant;
 import org.jetbrains.annotations.NotNull;
+import org.mpris.mpris.*;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package com.spotifyxp.deps.de.werwolf2303.mpris.mpris;
+package org.mpris.mpris;
 
 import org.freedesktop.dbus.DBusPath;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;

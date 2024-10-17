@@ -1,4 +1,4 @@
-package com.spotifyxp.deps.de.werwolf2303.mpris;
+package org.mpris;
 
 public interface ReturnableTypeRunnable<S, T> {
     S run(T value);

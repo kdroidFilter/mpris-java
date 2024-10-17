@@ -1,4 +1,4 @@
-package com.spotifyxp.deps.de.werwolf2303.mpris;
+package org.mpris;
 
 public enum MPRISObjectPaths {
     MEDIAPLAYER2("org.mpris.MediaPlayer2"),
