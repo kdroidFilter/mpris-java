@@ -889,4 +889,8 @@ public class MPRISMP2All implements MediaPlayer2, Player, Playlists, TrackList, 
             }
         });
     }
+
+    public void setPosition(int i) {
+        position = i;
+    }
 }

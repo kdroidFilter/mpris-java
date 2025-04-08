@@ -761,4 +761,8 @@ public class MPRISMP2WPL implements MediaPlayer2, Player, Playlists, DBusPropert
             }
         });
     }
+
+    public void setPosition(int i) {
+        position = i;
+    }
 }

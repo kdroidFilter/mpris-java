@@ -650,4 +650,8 @@ public class MPRISMP2None implements MediaPlayer2, Player, DBusProperties {
             }
         });
     }
+
+    public void setPosition(int i) {
+        position = i;
+    }
 }
