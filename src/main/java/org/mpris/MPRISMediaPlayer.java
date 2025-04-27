@@ -403,7 +403,7 @@ public class MPRISMediaPlayer {
             this.metadata = metadata.getInternalMap();
             return this;
         }
-        
+
         public PlayerBuilder setVolume(double volume) {
             this.volume = volume;
             return this;
@@ -666,7 +666,7 @@ public class MPRISMediaPlayer {
             this.onGetPlaylists = onGetPlaylists;
             return this;
         }
-        
+
         public PlaylistsBuilder setOnSignalPlaylistChanged(@NotNull TypeRunnable<Playlists.PlaylistChanged> onSignalPlaylistChanged) {
             this.onSignalPlaylistChanged = onSignalPlaylistChanged;
             return this;
@@ -706,5 +706,13 @@ public class MPRISMediaPlayer {
                 break;
         }
         connection.requestBusName("org.mpris.MediaPlayer2." + playerName);
+    }
+
+    /**
+     * Gets the MPRISMP2None instance if it has been built
+     * @return the MPRISMP2None instance or null if it hasn't been built
+     */
+    public MPRISMP2None getMPRISMediaPlayer2None() {
+        return mprisMediaPlayer2None;
     }
 }

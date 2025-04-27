@@ -28,7 +28,9 @@ public class MPRISSwingDemo {
     private JLabel artistLabel;
     private JLabel albumLabel;
     private MPRISMediaPlayer.PlayerBuilder playerBuilder;
+    private MPRISMediaPlayer mediaPlayer;
     private DBusConnection connection;
+    private PlaybackStatus currentPlaybackStatus = PlaybackStatus.STOPPED;
 
     // Track information
     private String currentTitle = "Unknown";
@@ -52,7 +54,7 @@ public class MPRISSwingDemo {
         connection = DBusConnection.newConnection(DBusConnection.DBusBusType.SESSION);
 
         // Create a media player with a unique name
-        MPRISMediaPlayer mediaPlayer = new MPRISMediaPlayer(connection, "mprisSwingDemo");
+        mediaPlayer = new MPRISMediaPlayer(connection, "mprisSwingDemo");
 
         // Create metadata for a track and update instance variables
         Metadata metadata = createSampleTrackMetadata();
@@ -93,6 +95,9 @@ public class MPRISSwingDemo {
                 .setOnPlay(o -> System.out.println("Play"))
                 .setOnSeek(position -> System.out.println("Seek to " + position))
                 .setOnOpenURI(uri -> System.out.println("Open URI: " + uri));
+
+        // Initialize the current playback status
+        currentPlaybackStatus = PlaybackStatus.STOPPED;
 
         // Build the media player with the minimum required interfaces (MediaPlayer2 and Player)
         mediaPlayer.buildMPRISMediaPlayer2None(mediaPlayer2Builder, playerBuilder);
@@ -144,39 +149,61 @@ public class MPRISSwingDemo {
         // Control buttons panel
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        JButton playButton = new JButton("Play");
-        JButton pauseButton = new JButton("Pause");
+        JButton playPauseButton = new JButton("Play");
         JButton stopButton = new JButton("Stop");
         JButton prevButton = new JButton("Previous");
         JButton nextButton = new JButton("Next");
         JButton quitButton = new JButton("Quit");
 
         // Add action listeners to buttons
-        playButton.addActionListener(e -> {
-            playerBuilder.setPlaybackStatus(PlaybackStatus.PLAYING);
-            statusLabel.setText("Status: PLAYING");
-            System.out.println("Playback started");
-        });
-
-        pauseButton.addActionListener(e -> {
-            playerBuilder.setPlaybackStatus(PlaybackStatus.PAUSED);
-            statusLabel.setText("Status: PAUSED");
-            System.out.println("Playback paused");
+        playPauseButton.addActionListener(e -> {
+            try {
+                if (currentPlaybackStatus == PlaybackStatus.PLAYING) {
+                    // If currently playing, change to paused
+                    currentPlaybackStatus = PlaybackStatus.PAUSED;
+                    playerBuilder.setPlaybackStatus(PlaybackStatus.PAUSED);
+                    mediaPlayer.getMPRISMediaPlayer2None().setPlaybackStatus(PlaybackStatus.PAUSED);
+                    playPauseButton.setText("Play");
+                    statusLabel.setText("Status: PAUSED");
+                    System.out.println("Playback paused");
+                } else {
+                    // If paused or stopped, change to playing
+                    currentPlaybackStatus = PlaybackStatus.PLAYING;
+                    playerBuilder.setPlaybackStatus(PlaybackStatus.PLAYING);
+                    mediaPlayer.getMPRISMediaPlayer2None().setPlaybackStatus(PlaybackStatus.PLAYING);
+                    playPauseButton.setText("Pause");
+                    statusLabel.setText("Status: PLAYING");
+                    System.out.println("Playback started");
+                }
+            } catch (Exception ex) {
+                System.err.println("Error updating playback status: " + ex.getMessage());
+                ex.printStackTrace();
+            }
         });
 
         stopButton.addActionListener(e -> {
-            playerBuilder.setPlaybackStatus(PlaybackStatus.STOPPED);
-            statusLabel.setText("Status: STOPPED");
-            System.out.println("Playback stopped");
+            try {
+                currentPlaybackStatus = PlaybackStatus.STOPPED;
+                playerBuilder.setPlaybackStatus(PlaybackStatus.STOPPED);
+                mediaPlayer.getMPRISMediaPlayer2None().setPlaybackStatus(PlaybackStatus.STOPPED);
+                playPauseButton.setText("Play");
+                statusLabel.setText("Status: STOPPED");
+                System.out.println("Playback stopped");
+            } catch (Exception ex) {
+                System.err.println("Error updating playback status: " + ex.getMessage());
+                ex.printStackTrace();
+            }
         });
 
         nextButton.addActionListener(e -> {
             try {
                 Metadata nextMetadata = createNextTrackMetadata();
                 playerBuilder.setMetadata(nextMetadata);
+                mediaPlayer.getMPRISMediaPlayer2None().setMetadata(nextMetadata);
                 updateTrackInfo(nextMetadata);
                 System.out.println("Changed to next track");
-            } catch (URISyntaxException ex) {
+            } catch (Exception ex) {
+                System.err.println("Error updating metadata: " + ex.getMessage());
                 ex.printStackTrace();
             }
         });
@@ -185,9 +212,11 @@ public class MPRISSwingDemo {
             try {
                 Metadata prevMetadata = createPreviousTrackMetadata();
                 playerBuilder.setMetadata(prevMetadata);
+                mediaPlayer.getMPRISMediaPlayer2None().setMetadata(prevMetadata);
                 updateTrackInfo(prevMetadata);
                 System.out.println("Changed to previous track");
-            } catch (URISyntaxException ex) {
+            } catch (Exception ex) {
+                System.err.println("Error updating metadata: " + ex.getMessage());
                 ex.printStackTrace();
             }
         });
@@ -197,8 +226,7 @@ public class MPRISSwingDemo {
         });
 
         // Add buttons to control panel
-        controlPanel.add(playButton);
-        controlPanel.add(pauseButton);
+        controlPanel.add(playPauseButton);
         controlPanel.add(stopButton);
         controlPanel.add(prevButton);
         controlPanel.add(nextButton);
@@ -250,7 +278,7 @@ public class MPRISSwingDemo {
      */
     private Metadata createNextTrackMetadata() throws URISyntaxException {
         // Update instance variables
-        currentTitle = "Next Track";
+        currentTitle = "Next Track 2";
         currentArtist = "Sample Artist";
         currentAlbum = "Sample Album";
 

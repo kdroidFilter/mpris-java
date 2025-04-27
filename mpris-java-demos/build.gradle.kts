@@ -30,14 +30,6 @@ application {
     mainClass.set("org.mpris.demo.MPRISNotificationDemo")
 }
 
-// Task to run the notification demo
-tasks.register<JavaExec>("runNotificationDemo") {
-    description = "Run the MPRIS Notification Demo"
-    group = "application"
-
-    mainClass.set("org.mpris.demo.MPRISNotificationDemo")
-    classpath = sourceSets["main"].runtimeClasspath
-}
 
 // Task to run the Swing demo
 tasks.register<JavaExec>("runSwingDemo") {
