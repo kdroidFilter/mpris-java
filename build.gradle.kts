@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "org.mpris"
-version = project.property("mprisJavaVersion") as String
+version = libs.versions.mprisJava.get()
 
 repositories {
     mavenCentral()
@@ -15,21 +15,6 @@ java {
 }
 
 dependencies {
-    implementation("com.github.hypfvieh:dbus-java:${project.property("dbusJavaVersion")}")
-    implementation("org.jetbrains:annotations:${project.property("jetbrainsAnnotationsVersion")}")
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-}
-
-// Create a JAR with the library
-tasks.register<Jar>("libraryJar") {
-    archiveFileName.set("mpris-java.jar")
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(sourceSets.main.get().output)
-}
-
-tasks.build {
-    dependsOn("libraryJar")
+    implementation(libs.dbusJava)
+    implementation(libs.jetbrainsAnnotations)
 }
