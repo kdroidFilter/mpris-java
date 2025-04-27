@@ -262,7 +262,7 @@ public class MPRISSwingDemo {
         return new Metadata.Builder()
                 .setTrackID(new DBusPath("/org/mpris/MediaPlayer2/Track/1"))
                 .setLength(180000000) // 3 minutes in microseconds
-                .setArtURL(new URI("https://ca.slack-edge.com/T09229ZC6-U070RR9Q6BE-b8b2da805ea7-512"))
+                .setArtURL(new URI("https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Apple_Music_icon.svg/2048px-Apple_Music_icon.svg.png"))
                 .setAlbumName(currentAlbum)
                 .setAlbumArtists(Arrays.asList(currentArtist))
                 .setArtists(Arrays.asList(currentArtist))
@@ -285,7 +285,7 @@ public class MPRISSwingDemo {
         return new Metadata.Builder()
                 .setTrackID(new DBusPath("/org/mpris/MediaPlayer2/Track/2"))
                 .setLength(240000000) // 4 minutes in microseconds
-                .setArtURL(new URI("https://ca.slack-edge.com/T8493FQ76-U01A2EW3XBQ-ee10e32f10e5-512"))
+                .setArtURL(new URI("https://png.pngtree.com/png-clipart/20190921/original/pngtree-music-icon-png-image_4694506.jpg"))
                 .setAlbumName(currentAlbum)
                 .setAlbumArtists(Arrays.asList(currentArtist))
                 .setArtists(Arrays.asList(currentArtist))
@@ -308,7 +308,7 @@ public class MPRISSwingDemo {
         return new Metadata.Builder()
                 .setTrackID(new DBusPath("/org/mpris/MediaPlayer2/Track/3"))
                 .setLength(200000000) // 3.33 minutes in microseconds
-                .setArtURL(new URI("https://example.com/album-art3.jpg"))
+                .setArtURL(new URI("https://images.vexels.com/media/users/3/131548/isolated/svg/9e36529b6e31cc4bae564fc2d14a8d0f.svg"))
                 .setAlbumName(currentAlbum)
                 .setAlbumArtists(Arrays.asList(currentArtist))
                 .setArtists(Arrays.asList(currentArtist))
