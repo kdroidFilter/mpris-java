@@ -87,12 +87,112 @@ public class MPRISSwingDemo {
                 .setCanPause(true)
                 .setCanSeek(true)
                 .setCanControl(true)
-                .setOnNext(o -> System.out.println("Next track"))
-                .setOnPrevious(o -> System.out.println("Previous track"))
-                .setOnPause(o -> System.out.println("Pause"))
-                .setOnPlayPause(o -> System.out.println("Play/Pause"))
-                .setOnStop(o -> System.out.println("Stop"))
-                .setOnPlay(o -> System.out.println("Play"))
+                .setOnNext(o -> {
+                    System.out.println("Next track");
+                    try {
+                        Metadata nextMetadata = createNextTrackMetadata();
+                        playerBuilder.setMetadata(nextMetadata);
+                        mediaPlayer.getMPRISMediaPlayer2None().setMetadata(nextMetadata);
+                        updateTrackInfo(nextMetadata);
+                    } catch (Exception ex) {
+                        System.err.println("Error updating metadata: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                })
+                .setOnPrevious(o -> {
+                    System.out.println("Previous track");
+                    try {
+                        Metadata prevMetadata = createPreviousTrackMetadata();
+                        playerBuilder.setMetadata(prevMetadata);
+                        mediaPlayer.getMPRISMediaPlayer2None().setMetadata(prevMetadata);
+                        updateTrackInfo(prevMetadata);
+                    } catch (Exception ex) {
+                        System.err.println("Error updating metadata: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                })
+                .setOnPause(o -> {
+                    System.out.println("Pause");
+                    try {
+                        currentPlaybackStatus = PlaybackStatus.PAUSED;
+                        playerBuilder.setPlaybackStatus(PlaybackStatus.PAUSED);
+                        mediaPlayer.getMPRISMediaPlayer2None().setPlaybackStatus(PlaybackStatus.PAUSED);
+                        SwingUtilities.invokeLater(() -> {
+                            if (statusLabel != null) {
+                                statusLabel.setText("Status: PAUSED");
+                            }
+                        });
+                        updatePlayPauseButtonText("Play");
+                    } catch (Exception ex) {
+                        System.err.println("Error updating playback status: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                })
+                .setOnPlayPause(o -> {
+                    System.out.println("Play/Pause");
+                    try {
+                        if (currentPlaybackStatus == PlaybackStatus.PLAYING) {
+                            // If currently playing, change to paused
+                            currentPlaybackStatus = PlaybackStatus.PAUSED;
+                            playerBuilder.setPlaybackStatus(PlaybackStatus.PAUSED);
+                            mediaPlayer.getMPRISMediaPlayer2None().setPlaybackStatus(PlaybackStatus.PAUSED);
+                            SwingUtilities.invokeLater(() -> {
+                                if (statusLabel != null) {
+                                    statusLabel.setText("Status: PAUSED");
+                                }
+                            });
+                            updatePlayPauseButtonText("Play");
+                        } else {
+                            // If paused or stopped, change to playing
+                            currentPlaybackStatus = PlaybackStatus.PLAYING;
+                            playerBuilder.setPlaybackStatus(PlaybackStatus.PLAYING);
+                            mediaPlayer.getMPRISMediaPlayer2None().setPlaybackStatus(PlaybackStatus.PLAYING);
+                            SwingUtilities.invokeLater(() -> {
+                                if (statusLabel != null) {
+                                    statusLabel.setText("Status: PLAYING");
+                                }
+                            });
+                            updatePlayPauseButtonText("Pause");
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("Error updating playback status: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                })
+                .setOnStop(o -> {
+                    System.out.println("Stop");
+                    try {
+                        currentPlaybackStatus = PlaybackStatus.STOPPED;
+                        playerBuilder.setPlaybackStatus(PlaybackStatus.STOPPED);
+                        mediaPlayer.getMPRISMediaPlayer2None().setPlaybackStatus(PlaybackStatus.STOPPED);
+                        SwingUtilities.invokeLater(() -> {
+                            if (statusLabel != null) {
+                                statusLabel.setText("Status: STOPPED");
+                            }
+                        });
+                        updatePlayPauseButtonText("Play");
+                    } catch (Exception ex) {
+                        System.err.println("Error updating playback status: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                })
+                .setOnPlay(o -> {
+                    System.out.println("Play");
+                    try {
+                        currentPlaybackStatus = PlaybackStatus.PLAYING;
+                        playerBuilder.setPlaybackStatus(PlaybackStatus.PLAYING);
+                        mediaPlayer.getMPRISMediaPlayer2None().setPlaybackStatus(PlaybackStatus.PLAYING);
+                        SwingUtilities.invokeLater(() -> {
+                            if (statusLabel != null) {
+                                statusLabel.setText("Status: PLAYING");
+                            }
+                        });
+                        updatePlayPauseButtonText("Pause");
+                    } catch (Exception ex) {
+                        System.err.println("Error updating playback status: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                })
                 .setOnSeek(position -> System.out.println("Seek to " + position))
                 .setOnOpenURI(uri -> System.out.println("Open URI: " + uri));
 
@@ -248,6 +348,45 @@ public class MPRISSwingDemo {
         trackLabel.setText("Track: " + currentTitle);
         artistLabel.setText("Artist: " + currentArtist);
         albumLabel.setText("Album: " + currentAlbum);
+    }
+
+    /**
+     * Helper method to find and update the play/pause button text
+     * @param newText The new text to set on the button
+     */
+    private void updatePlayPauseButtonText(String newText) {
+        if (frame == null) return;
+
+        SwingUtilities.invokeLater(() -> {
+            // Search through all components to find the play/pause button
+            for (Component comp : frame.getContentPane().getComponents()) {
+                if (comp instanceof JPanel) {
+                    JPanel panel = (JPanel) comp;
+                    findAndUpdateButton(panel, newText);
+                }
+            }
+        });
+    }
+
+    /**
+     * Recursively search for the play/pause button in a container
+     * @param container The container to search in
+     * @param newText The new text to set on the button
+     */
+    private void findAndUpdateButton(Container container, String newText) {
+        for (Component comp : container.getComponents()) {
+            if (comp instanceof JButton) {
+                JButton button = (JButton) comp;
+                String buttonText = button.getText();
+                if ("Play".equals(buttonText) || "Pause".equals(buttonText)) {
+                    button.setText(newText);
+                    return; // Found and updated the button, so return
+                }
+            } else if (comp instanceof Container) {
+                // Recursively search in nested containers
+                findAndUpdateButton((Container) comp, newText);
+            }
+        }
     }
 
     /**
