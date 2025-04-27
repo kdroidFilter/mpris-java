@@ -1,7 +1,7 @@
 [versions]
 mprisJava = "1.0.0-SNAPSHOT" # Project version
 dbusJava = "3.3.2"           # dbus-java version
-jetbrainsAnnotations = "24.0.0" # Jetbrains annotations version
+jetbrainsAnnotations = "26.0.2" # Jetbrains annotations version
 
 [libraries]
 dbusJava = { module = "com.github.hypfvieh:dbus-java", version.ref = "dbusJava" }
