@@ -1,66 +1,204 @@
-# mpris-java
+# MPRIS Java
 
-100% Pure java implementation of MPRIS (MPRIS D-Bus Interface Specification)
+A Java/Kotlin library for implementing the [MPRIS D-Bus Interface Specification](https://specifications.freedesktop.org/mpris-spec/latest/) in media players.
 
-Taken from the freedesktop.org site:
+## Features
 
-The Media Player Remote Interfacing Specification is a standard D-Bus interface which aims to provide a common programmatic API for controlling media players.
+- Full implementation of the MPRIS D-Bus Interface Specification
+- Support for all MPRIS interfaces: MediaPlayer2, Player, TrackList, and Playlists
+- Kotlin DSL for easy configuration
+- Java API for use in Java applications
+- Demo applications showcasing usage
 
-It provides a mechanism for discovery, querying and basic playback control of compliant media players, as well as a tracklist interface which is used to add context to the active media item.
+## Getting Started
 
-## Building the Project
+### Kotlin (Recommended)
 
-This project uses Gradle with Kotlin DSL (build.gradle.kts) as its build system.
+The library provides a Kotlin DSL for easy configuration of MPRIS media players.
 
-### First-time setup
+#### Basic Usage
 
-Before building the project for the first time, you need to generate the Gradle wrapper files:
+```kotlin
+// Create a simple media player with sensible defaults
+val mediaPlayer = simpleMediaPlayer("myPlayerName", "My Media Player") {
+    // Optional custom configuration
+    mediaPlayer2 {
+        desktopEntry = "my-player.desktop"
+        onRaise = { println("Player raised") }
+        onQuit = { exitProcess(0) }
+    }
+    
+    player {
+        // Configure initial track
+        metadata {
+            trackId(DBusPath("/org/mpris/MediaPlayer2/Track/1"))
+            title("My Track")
+            artists("My Artist")
+            albumName("My Album")
+        }
+    }
+}
 
-```bash
-gradle wrapper
+// Update track metadata
+mediaPlayer.updateTrack(
+    id = "/org/mpris/MediaPlayer2/Track/2",
+    title = "New Track",
+    artist = "New Artist",
+    album = "New Album"
+)
+
+// Control playback
+mediaPlayer.play()
+mediaPlayer.pause()
+mediaPlayer.stop()
+mediaPlayer.next()
+mediaPlayer.previous()
 ```
 
-This will create the necessary wrapper files, including the gradle-wrapper.jar file.
+#### Advanced Usage
 
-### Version Management
+For more advanced use cases, you can use the full DSL:
 
-This project uses a centralized version management approach with a `gradle.properties` file in the root directory. This file contains version information for the project and its dependencies, making it easy to update versions in a single place.
+```kotlin
+val mediaPlayer = createMediaPlayer("myPlayerName") {
+    // Configure MediaPlayer2 interface
+    mediaPlayer2 {
+        canQuit = true
+        canRaise = true
+        identity = "My Media Player"
+        desktopEntry = "my-player.desktop"
+        supportedUriSchemes = listOf("file", "http", "https")
+        supportedMimeTypes = listOf("audio/mpeg", "audio/flac")
+        onRaise = { println("Player raised") }
+        onQuit = { exitProcess(0) }
+    }
 
-The version information is defined in the following properties:
-- `mprisJavaVersion`: The version of the mpris-java library
-- `dbusJavaVersion`: The version of the dbus-java dependency
-- `jetbrainsAnnotationsVersion`: The version of the Jetbrains annotations dependency
-
-### Building
-
-To build the project:
-
-```bash
-./gradlew build
+    // Configure Player interface
+    player {
+        playbackStatus = PlaybackStatus.STOPPED
+        loopStatus = LoopStatus.NONE
+        shuffle = false
+        volume = 1.0
+        canGoNext = true
+        canGoPrevious = true
+        canPlay = true
+        canPause = true
+        canSeek = true
+        canControl = true
+        
+        // Configure metadata
+        metadata {
+            trackId(DBusPath("/org/mpris/MediaPlayer2/Track/1"))
+            length(180000000) // 3 minutes in microseconds
+            artUrl(URI("https://example.com/album-art.jpg"))
+            albumName("My Album")
+            albumArtists("My Artist")
+            artists("My Artist")
+            title("My Track")
+            trackNumber(1)
+            discNumber(1)
+            genres("Rock", "Pop")
+        }
+        
+        // Configure event handlers
+        onNext = { /* Handle next track */ }
+        onPrevious = { /* Handle previous track */ }
+        onPause = { /* Handle pause */ }
+        onPlay = { /* Handle play */ }
+        onStop = { /* Handle stop */ }
+        onPlayPause = { /* Handle play/pause toggle */ }
+        onSeek = { position -> /* Handle seek */ }
+        onOpenURI = { uri -> /* Handle open URI */ }
+    }
+    
+    // Optional: Configure TrackList interface
+    trackList {
+        tracks = listOf(DBusPath("/org/mpris/MediaPlayer2/Track/1"))
+        canEditTracks = false
+        onGetTracksMetadata = { tracks -> /* Return metadata for tracks */ emptyList() }
+        onAddTrack = { /* Handle add track */ }
+        onRemoveTrack = { /* Handle remove track */ }
+        onGoTo = { /* Handle go to track */ }
+    }
+    
+    // Optional: Configure Playlists interface
+    playlists {
+        playlistsCount = 0
+        orderings = listOf(PlaylistOrdering.ALPHABETICAL)
+        // activePlaylist must be set
+        activePlaylist = Maybe_Playlist(false, Playlist(DBusPath("/"), "", ""))
+        onActivatePlaylist = { /* Handle activate playlist */ }
+        onGetPlaylists = { /* Return playlists */ emptyList() }
+    }
+}
 ```
 
-This will compile the code and create a JAR file in the `build/libs` directory.
+### Java
 
-## Demo Applications
+The library also provides a Java API for use in Java applications.
 
-Demo applications are included in a separate module (`mpris-java-demos`) to show how to use this library to create media players that display notifications. The demos include:
+```java
+// Create a media player
+MPRISMediaPlayer mediaPlayer = new MPRISMediaPlayer(
+    DBusConnection.newConnection(DBusConnection.DBusBusType.SESSION),
+    "myPlayerName"
+);
 
-1. A command-line interface demo (MPRISNotificationDemo)
-2. A graphical user interface demo using Java Swing (MPRISSwingDemo)
+// Configure the media player
+MPRISMediaPlayer.MediaPlayer2Builder mediaPlayer2Builder = new MPRISMediaPlayer.MediaPlayer2Builder()
+    .setCanQuit(true)
+    .setCanRaise(true)
+    .setIdentity("My Media Player")
+    .setDesktopEntry("my-player.desktop")
+    .setSupportedUriSchemes("file", "http", "https")
+    .setSupportedMimeTypes("audio/mpeg", "audio/flac")
+    .setOnRaise(() -> System.out.println("Player raised"))
+    .setOnQuit(() -> System.exit(0));
 
-See the [demo README](mpris-java-demos/src/main/java/org/mpris/demo/README.md) for more information on how to run and use the demos.
+// Configure the player
+Metadata metadata = new Metadata.Builder()
+    .setTrackID(new DBusPath("/org/mpris/MediaPlayer2/Track/1"))
+    .setLength(180000000) // 3 minutes in microseconds
+    .setArtURL(URI.create("https://example.com/album-art.jpg"))
+    .setAlbumName("My Album")
+    .setAlbumArtists(List.of("My Artist"))
+    .setArtists(List.of("My Artist"))
+    .setTitle("My Track")
+    .setTrackNumber(1)
+    .setDiscNumber(1)
+    .setGenres(List.of("Rock", "Pop"))
+    .build();
 
-### Running the Demos
+MPRISMediaPlayer.PlayerBuilder playerBuilder = new MPRISMediaPlayer.PlayerBuilder()
+    .setPlaybackStatus(PlaybackStatus.STOPPED)
+    .setLoopStatus(LoopStatus.NONE)
+    .setShuffle(false)
+    .setVolume(1.0)
+    .setMetadata(metadata)
+    .setCanGoNext(true)
+    .setCanGoPrevious(true)
+    .setCanPlay(true)
+    .setCanPause(true)
+    .setCanSeek(true)
+    .setCanControl(true)
+    .setOnNext(() -> { /* Handle next track */ })
+    .setOnPrevious(() -> { /* Handle previous track */ })
+    .setOnPause(() -> { /* Handle pause */ })
+    .setOnPlay(() -> { /* Handle play */ })
+    .setOnStop(() -> { /* Handle stop */ })
+    .setOnPlayPause(() -> { /* Handle play/pause toggle */ });
 
-To build and run the demos:
+// Build the media player
+mediaPlayer.buildMPRISMediaPlayer2None(mediaPlayer2Builder, playerBuilder);
 
-```bash
-# Build the entire project including demos
-./gradlew build
-
-# Run the command-line demo
-./gradlew :mpris-java-demos:runNotificationDemo
-
-# Run the Swing GUI demo
-./gradlew :mpris-java-demos:runSwingDemo
+// Create the media player on the D-Bus
+mediaPlayer.create();
 ```
+
+## Examples
+
+See the `mpris-java-demos` directory for example applications.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
