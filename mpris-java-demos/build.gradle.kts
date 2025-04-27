@@ -1,40 +1,40 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
     java
-    application
+    kotlin("jvm")
+    id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 group = "org.mpris"
 version = libs.versions.mprisJava.get()
 
 repositories {
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    google()
+    gradlePluginPortal()
     mavenCentral()
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
 
 dependencies {
     implementation(libs.dbusJava)
     implementation(project(":"))  // Dependency on the main module
+    implementation(compose.desktop.currentOs)
+    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
+
 }
 
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
+compose.desktop {
+    application {
+        mainClass = "org.mpris.demo.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "demo"
+            packageVersion = "1.0.0"
+        }
+    }
 }
 
-// Configure the application plugin to use the notification demo as the main class
-application {
-    mainClass.set("org.mpris.demo.MPRISNotificationDemo")
-}
-
-
-// Task to run the Swing demo
-tasks.register<JavaExec>("runSwingDemo") {
-    description = "Run the MPRIS Swing Demo"
-    group = "application"
-
-    mainClass.set("org.mpris.demo.MPRISSwingDemo")
-    classpath = sourceSets["main"].runtimeClasspath
-}

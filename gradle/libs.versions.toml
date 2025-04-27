@@ -6,3 +6,5 @@ jetbrainsAnnotations = "26.0.2" # Jetbrains annotations version
 [libraries]
 dbusJava = { module = "com.github.hypfvieh:dbus-java", version.ref = "dbusJava" }
 jetbrainsAnnotations = { module = "org.jetbrains:annotations", version.ref = "jetbrainsAnnotations" }
+
+[plugins]
