@@ -7,4 +7,8 @@
 /dataSources/
 /dataSources.local.xml
 .idea
-/target
+
+# Gradle
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar

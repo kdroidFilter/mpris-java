@@ -142,7 +142,7 @@ public class MPRISNotificationDemo {
         return new Metadata.Builder()
                 .setTrackID(new DBusPath("/org/mpris/MediaPlayer2/Track/1"))
                 .setLength(180000000) // 3 minutes in microseconds
-                .setArtURL(new URI("https://example.com/album-art.jpg"))
+                .setArtURL(new URI("https://ca.slack-edge.com/T09229ZC6-U070RR9Q6BE-b8b2da805ea7-512"))
                 .setAlbumName("Sample Album")
                 .setAlbumArtists(Arrays.asList("Sample Artist"))
                 .setArtists(Arrays.asList("Sample Artist"))
@@ -160,7 +160,7 @@ public class MPRISNotificationDemo {
         return new Metadata.Builder()
                 .setTrackID(new DBusPath("/org/mpris/MediaPlayer2/Track/2"))
                 .setLength(240000000) // 4 minutes in microseconds
-                .setArtURL(new URI("https://example.com/album-art2.jpg"))
+                .setArtURL(new URI("https://ca.slack-edge.com/T8493FQ76-U01A2EW3XBQ-ee10e32f10e5-512"))
                 .setAlbumName("Sample Album")
                 .setAlbumArtists(Arrays.asList("Sample Artist"))
                 .setArtists(Arrays.asList("Sample Artist"))
