@@ -22,6 +22,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.dbusJava)
+    api(libs.dbusJava)
     implementation(libs.jetbrainsAnnotations)
 }

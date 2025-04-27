@@ -19,7 +19,6 @@ repositories {
 
 
 dependencies {
-    implementation(libs.dbusJava)
     implementation(project(":"))  // Dependency on the main module
     implementation(compose.desktop.currentOs)
     runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
